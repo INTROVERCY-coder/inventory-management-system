@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Inventory Management System</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<header class="navbar">
+
+    <div class="logo">
+        <span class="logo-icon">📦</span>
+        <div>
+            <h2>StockFlow</h2>
+            <small>Inventory Management</small>
+        </div>
+    </div>
+
+    <nav>
+        <a href="#dashboard">Dashboard</a>
+        <a href="#products">Products</a>
+        <a href="#about">About</a>
+    </nav>
+
+</header>
+
+
+<main>
+
+    <!-- HERO -->
+    <section class="hero" id="dashboard">
+
+        <div class="hero-content">
+
+            <div class="badge">
+                INVENTORY MANAGEMENT SYSTEM
+            </div>
+
+            <h1>
+                Manage your inventory
+                <span>smarter.</span>
+            </h1>
+
+            <p>
+                Add, search, update and manage your products
+                from one simple dashboard.
+            </p>
+
+            <button class="primary-btn" onclick="scrollToProducts()">
+                Manage Products →
+            </button>
+
+        </div>
+
+        <div class="hero-card">
+            <div class="hero-card-icon">📊</div>
+            <h3>Inventory Dashboard</h3>
+            <p>Real-time stock information</p>
+
+            <div class="mini-chart">
+                <div style="height: 40%"></div>
+                <div style="height: 65%"></div>
+                <div style="height: 50%"></div>
+                <div style="height: 80%"></div>
+                <div style="height: 70%"></div>
+                <div style="height: 95%"></div>
+            </div>
+        </div>
+
+    </section>
+
+
+    <!-- STATISTICS -->
+    <section class="stats">
+
+        <div class="stat-card">
+            <div class="stat-icon blue">📦</div>
+            <div>
+                <p>Total Products</p>
+                <h2 id="totalProducts">0</h2>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon green">📈</div>
+            <div>
+                <p>Total Stock</p>
+                <h2 id="totalStock">0</h2>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon orange">⚠️</div>
+            <div>
+                <p>Low Stock</p>
+                <h2 id="lowStock">0</h2>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon purple">₹</div>
+            <div>
+                <p>Inventory Value</p>
+                <h2 id="inventoryValue">₹0</h2>
+            </div>
+        </div>
+
+    </section>
+
+
+    <!-- PRODUCTS -->
+    <section class="products-section" id="products">
+
+        <div class="section-heading">
+            <div>
+                <p class="section-label">PRODUCT MANAGEMENT</p>
+                <h2>Products</h2>
+                <p>Add and manage your inventory records.</p>
+            </div>
+
+            <button class="primary-btn" onclick="openAddModal()">
+                + Add Product
+            </button>
+        </div>
+
+
+        <!-- SEARCH -->
+        <div class="toolbar">
+
+            <div class="search-box">
+                <span>🔍</span>
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search by ID, name or category..."
+                    oninput="searchProducts()"
+                >
+            </div>
+
+            <button class="refresh-btn" onclick="loadProducts()">
+                ↻ Refresh
+            </button>
+
+        </div>
+
+
+        <!-- TABLE -->
+        <div class="table-container">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Product ID</th>
+                        <th>Product Name</th>
+                        <th>Category</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody id="productTableBody">
+
+                </tbody>
+
+            </table>
+
+            <div id="emptyState" class="empty-state">
+                <div>📦</div>
+                <h3>No products found</h3>
+                <p>Add your first product to start managing inventory.</p>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ABOUT -->
+    <section class="about-section" id="about">
+
+        <div class="about-card">
+
+            <div class="about-icon">
+                👨‍💻
+            </div>
+
+            <div>
+
+                <p class="section-label">ABOUT THE PROJECT</p>
+
+                <h2>Inventory Management System</h2>
+
+                <p>
+                    This web application was developed as a mini project
+                    to demonstrate full-stack web development, CRUD
+                    operations, REST APIs, database integration and
+                    dynamic frontend interaction.
+                </p>
+
+                <div class="student-info">
+
+                    <div>
+                        <span>Developed By</span>
+                        <strong>Nirbhaysingh A. Chauhan</strong>
+                    </div>
+
+                    <div>
+                        <span>Technology</span>
+                        <strong>HTML • CSS • JavaScript • Flask • SQLite</strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<!-- MODAL -->
+
+<div class="modal-overlay" id="productModal">
+
+    <div class="modal">
+
+        <div class="modal-header">
+
+            <div>
+                <p class="section-label">PRODUCT</p>
+                <h2 id="modalTitle">Add Product</h2>
+            </div>
+
+            <button class="close-btn" onclick="closeModal()">×</button>
+
+        </div>
+
+
+        <form id="productForm">
+
+            <input type="hidden" id="editId">
+
+            <div class="form-group">
+
+                <label>Product ID *</label>
+
+                <input
+                    type="text"
+                    id="productId"
+                    placeholder="e.g. P1001"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Product Name *</label>
+
+                <input
+                    type="text"
+                    id="productName"
+                    placeholder="Enter product name"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-row">
+
+                <div class="form-group">
+
+                    <label>Category *</label>
+
+                    <input
+                        type="text"
+                        id="category"
+                        placeholder="e.g. Electronics"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Quantity *</label>
+
+                    <input
+                        type="number"
+                        id="quantity"
+                        min="0"
+                        placeholder="0"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Price (₹) *</label>
+
+                <input
+                    type="number"
+                    id="price"
+                    min="0"
+                    step="0.01"
+                    placeholder="0.00"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-actions">
+
+                <button
+                    type="button"
+                    class="secondary-btn"
+                    onclick="closeModal()"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    type="submit"
+                    class="primary-btn"
+                >
+                    Save Product
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- TOAST -->
+
+<div id="toast" class="toast"></div>
+
+
+<footer>
+
+    <p>
+        Inventory Management System
+        <span>•</span>
+        Developed by <strong>Nirbhaysingh A. Chauhan</strong>
+    </p>
+
+    <p>Mini Web App Project • 2026</p>
+
+</footer>
+
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+
+</body>
+</html>

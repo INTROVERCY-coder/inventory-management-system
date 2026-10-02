@@ -1,0 +1,10 @@
+{
+  "name": "inventory-management-system",
+  "version": "1.0.0",
+  "description": "Mini Project - Inventory / Product Management System",
+  "scripts": {
+    "dev": "echo Frontend files are ready. Flask runs the backend."
+  },
+  "author": "Nirbhaysingh A. Chauhan",
+  "license": "ISC"
+}
