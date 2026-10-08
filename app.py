@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template  # type: ignore[reportMissingImports]
 import sqlite3
 
 app = Flask(__name__)
@@ -14,7 +14,8 @@ def get_db_connection():
 
 def initialize_database():
     conn = get_db_connection()
-
+    
+    # Create table if not exists
     conn.execute("""
         CREATE TABLE IF NOT EXISTS products (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -25,8 +26,26 @@ def initialize_database():
             price REAL NOT NULL DEFAULT 0
         )
     """)
+    
+    # Check if table is empty
+    count = conn.execute("SELECT COUNT(*) FROM products").fetchone()[0]
+    
+    if count == 0:
+        print("Database is empty. Seeding with sample data...")
+        # Re-use the same logic as seed.py or import it
+        # For simplicity, just insert here or call a seed function
+        products = [
+            ("P1001", "Wireless Mouse", "Electronics", 50, 499.00),
+            ("P1002", "Mechanical Keyboard", "Electronics", 8, 2500.00),
+            ("P1003", "USB-C Hub", "Electronics", 0, 1200.00),
+            # ... add the rest of your sample data here ...
+        ]
+        conn.executemany("""
+            INSERT INTO products (product_id, name, category, quantity, price)
+            VALUES (?, ?, ?, ?)
+        """, products)
+        conn.commit()
 
-    conn.commit()
     conn.close()
 
 
